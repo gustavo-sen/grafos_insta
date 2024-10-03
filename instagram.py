@@ -2,98 +2,97 @@ import matplotlib.pyplot as plt
 import networkx as nx
 from collections import defaultdict
 
-class Grafo:
-    def __init__(self, vertices):
-        self.vertices = vertices
-        self.grafo = defaultdict(list)
+# Inicialização do grafo
+def criar_grafo(vertices):
+    return defaultdict(list)
 
-    # Função para adicionar arestas ao grafo
-    def adicionar_aresta(self, u, v):
-        self.grafo[u].append(v)
+# Função para adicionar arestas ao grafo
+def adicionar_aresta(grafo, u, v):
+    grafo[u].append(v)
 
-    # Função auxiliar de DFS para preencher a pilha com a ordem de término
-    def dfs(self, v, visitado, pilha):
-        visitado[v] = True
-        for vizinho in self.grafo[v]:
-            if not visitado[vizinho]:
-                self.dfs(vizinho, visitado, pilha)
-        pilha.append(v)
+# Função auxiliar de DFS para preencher a pilha com a ordem de término
+def dfs(grafo, v, visitado, pilha):
+    visitado[v] = True
+    for vizinho in grafo[v]:
+        if not visitado[vizinho]:
+            dfs(grafo, vizinho, visitado, pilha)
+    pilha.append(v)
 
-    # Função para transpor o grafo
-    def transpor(self):
-        grafo_transposto = Grafo(self.vertices)
-        for i in self.grafo:
-            for j in self.grafo[i]:
-                grafo_transposto.adicionar_aresta(j, i)
-        return grafo_transposto
+# Função para transpor o grafo
+def transpor(grafo):
+    grafo_transposto = criar_grafo(len(grafo))
+    for i in grafo:
+        for j in grafo[i]:
+            adicionar_aresta(grafo_transposto, j, i)
+    return grafo_transposto
 
-    # Função principal para encontrar componentes fortemente conectados
-    def kosaraju(self):
-        pilha = []
-        visitado = [False] * self.vertices
+# Função principal para encontrar componentes fortemente conectados
+def kosaraju(grafo):
+    pilha = []
+    visitado = [False] * len(grafo)
 
-        # Passo 1: Realizar DFS para preencher a pilha com a ordem de término dos nós
-        for i in range(self.vertices):
-            if not visitado[i]:
-                self.dfs(i, visitado, pilha)
+    # Passo 1: Realizar DFS para preencher a pilha
+    for i in range(len(grafo)):
+        if not visitado[i]:
+            dfs(grafo, i, visitado, pilha)
 
-        # Passo 2: Transpor o grafo
-        grafo_transposto = self.transpor()
+    # Passo 2: Transpor o grafo
+    grafo_transposto = transpor(grafo)
 
-        # Passo 3: Realizar DFS no grafo transposto na ordem dada pela pilha
-        visitado = [False] * self.vertices
-        clusters = []
+    # Passo 3: Realizar DFS no grafo transposto na ordem dada pela pilha
+    visitado = [False] * len(grafo)
+    clusters = []
 
-        while pilha:
-            v = pilha.pop()
-            if not visitado[v]:
-                cluster = []
-                grafo_transposto.dfs_cluster(v, visitado, cluster)
-                clusters.append(cluster)
+    while pilha:
+        v = pilha.pop()
+        if not visitado[v]:
+            cluster = []
+            dfs_cluster(grafo_transposto, v, visitado, cluster)
+            clusters.append(cluster)
 
-        return clusters
+    return clusters
 
-    # Função auxiliar de DFS para marcar os componentes no grafo transposto
-    def dfs_cluster(self, v, visitado, cluster):
-        visitado[v] = True
-        cluster.append(v)
-        for vizinho in self.grafo[v]:
-            if not visitado[vizinho]:
-                self.dfs_cluster(vizinho, visitado, cluster)
+# Função auxiliar de DFS para marcar os componentes no grafo transposto
+def dfs_cluster(grafo, v, visitado, cluster):
+    visitado[v] = True
+    cluster.append(v)
+    for vizinho in grafo[v]:
+        if not visitado[vizinho]:
+            dfs_cluster(grafo, vizinho, visitado, cluster)
 
-    # Função para sugerir amigos baseando-se em amigos em comum
-    def sugerir_amigos(self, usuario):
-        amigos = set(self.grafo[usuario])
-        sugestoes = set()
+# Função para sugerir amigos baseando-se em amigos em comum
+def sugerir_amigos(grafo, usuario):
+    amigos = set(grafo[usuario])
+    sugestoes = set()
 
-        for amigo in amigos:
-            for potencial in self.grafo[amigo]:
-                if potencial != usuario and potencial not in amigos:
-                    sugestoes.add(potencial)
+    for amigo in amigos:
+        for potencial in grafo[amigo]:
+            if potencial != usuario and potencial not in amigos:
+                sugestoes.add(potencial)
 
-        return list(sugestoes)
+    return list(sugestoes)
 
-# Criação do grafo
-grafo = Grafo(7)  # Exemplo com 7 nós
+# Criação do grafo usando dicionário
+grafo = criar_grafo(7)
 
 # Adicionando arestas (usuários seguem outros usuários)
-arestas = [
-    (0, 1),  # A segue B
-    (1, 2),  # B segue C
-    (2, 0),  # C segue A
-    (1, 3),  # B segue D
-    (3, 4),  # D segue E
-    (4, 5),  # E segue F
-    (5, 3),  # F segue D
-    (6, 4),  # G segue E
-    (6, 5)   # G segue F
-]
+arestas_dict = {
+    0: [1],  # A segue B
+    1: [2, 3],  # B segue C e D
+    2: [0],  # C segue A
+    3: [4],  # D segue E
+    4: [5],  # E segue F
+    5: [3, 6],  # F segue D e G
+    6: [4]   # G segue E
+}
 
-for u, v in arestas:
-    grafo.adicionar_aresta(u, v)
+# Adicionando as arestas ao grafo
+for u, v_list in arestas_dict.items():
+    for v in v_list:
+        adicionar_aresta(grafo, u, v)
 
 # Encontrando componentes fortemente conectados
-clusters = grafo.kosaraju()
+clusters = kosaraju(grafo)
 
 # Mostrando os clusters
 print("Componentes fortemente conectados encontrados:")
@@ -101,12 +100,14 @@ for i, cluster in enumerate(clusters):
     print(f"Cluster {i + 1}: {cluster}")
 
 # Sugerindo amigos para o usuário 0 (A)
-sugestoes = grafo.sugerir_amigos(0)
+sugestoes = sugerir_amigos(grafo, 0)
 print(f"\nSugestões de amigos para o usuário 0: {sugestoes}")
 
 # Visualizando o grafo
 G = nx.DiGraph()
-G.add_edges_from(arestas)
+for u, v_list in arestas_dict.items():
+    for v in v_list:
+        G.add_edge(u, v)
 
 # Definindo cores para os componentes fortemente conectados
 cores = ["#FF6347", "#4682B4", "#32CD32", "#FFD700", "#8A2BE2", "#FF69B4", "#00CED1"]
