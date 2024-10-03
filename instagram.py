@@ -61,20 +61,32 @@ class Grafo:
             if not visitado[vizinho]:
                 self.dfs_cluster(vizinho, visitado, cluster)
 
+    # Função para sugerir amigos baseando-se em amigos em comum
+    def sugerir_amigos(self, usuario):
+        amigos = set(self.grafo[usuario])
+        sugestoes = set()
+
+        for amigo in amigos:
+            for potencial in self.grafo[amigo]:
+                if potencial != usuario and potencial not in amigos:
+                    sugestoes.add(potencial)
+
+        return list(sugestoes)
+
 # Criação do grafo
 grafo = Grafo(7)  # Exemplo com 7 nós
 
 # Adicionando arestas (usuários seguem outros usuários)
 arestas = [
-    (0, 1),
-    (1, 2),
-    (2, 0),
-    (1, 3),
-    (3, 4),
-    (4, 5),
-    (5, 3),
-    (6, 4),
-    (6, 5)
+    (0, 1),  # A segue B
+    (1, 2),  # B segue C
+    (2, 0),  # C segue A
+    (1, 3),  # B segue D
+    (3, 4),  # D segue E
+    (4, 5),  # E segue F
+    (5, 3),  # F segue D
+    (6, 4),  # G segue E
+    (6, 5)   # G segue F
 ]
 
 for u, v in arestas:
@@ -87,6 +99,10 @@ clusters = grafo.kosaraju()
 print("Componentes fortemente conectados encontrados:")
 for i, cluster in enumerate(clusters):
     print(f"Cluster {i + 1}: {cluster}")
+
+# Sugerindo amigos para o usuário 0 (A)
+sugestoes = grafo.sugerir_amigos(0)
+print(f"\nSugestões de amigos para o usuário 0: {sugestoes}")
 
 # Visualizando o grafo
 G = nx.DiGraph()
@@ -110,5 +126,10 @@ for node in G.nodes():
 plt.figure(figsize=(10, 7))
 pos = nx.spring_layout(G)  # Layout para distribuir os nós
 nx.draw(G, pos, with_labels=True, node_color=node_colors, edge_color="#A9A9A9", node_size=800, font_size=10, font_color="white", arrows=True)
+
+# Adicionando arestas tracejadas para as sugestões
+for usuario in sugestoes:
+    plt.plot(*zip(pos[0], pos[usuario]), color='orange', linestyle='--', linewidth=2)  # Aresta tracejada de A para as sugestões
+
 plt.title("Componentes Fortemente Conectados no Grafo")
 plt.show()
