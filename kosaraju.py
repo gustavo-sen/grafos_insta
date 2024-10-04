@@ -94,9 +94,6 @@ print("Componentes fortemente conectados encontrados:")
 for i, cluster in enumerate(clusters):
     print(f"Cluster {i + 1}: {cluster}")
 
-# Sugerindo amigos para o usuário 0 (A)
-sugestoes = sugerir_amigos(grafo, 0)
-print(f"\nSugestões de amigos para o usuário 0: {sugestoes}")
 
 # Visualizando o grafo
 G = nx.DiGraph()
@@ -123,6 +120,18 @@ for node in G.nodes():
 plt.figure(figsize=(10, 7))
 pos = nx.spring_layout(G)  # Layout para distribuir os nós
 nx.draw(G, pos, with_labels=True, node_color=node_colors, edge_color="#A9A9A9", node_size=800, font_size=10, font_color="white", arrows=True)
+
+
+cores = ['red', 'orange', 'gray', 'yellow', 'green', 'purple']
+# Sugerindo amigos para o usuário 0 (A)
+for i in range(len(grafo)-1):
+    sugestoes = sugerir_amigos(grafo, i)
+    print(f"\nSugestões de amigos para o usuário {i}: {sugestoes}")
+    # Adicionando arestas tracejadas para as sugestões
+    for usuario in sugestoes:
+        plt.plot(*zip(pos[i], pos[usuario]), color=cores[i], linestyle='--', linewidth=2)  # Aresta tracejada para as sugestões
+
+
 
 
 plt.title("Componentes Fortemente Conectados no Grafo")
