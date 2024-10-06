@@ -71,7 +71,7 @@ def sugerir_amigos(cluster_list):
 
     return sugestoes 
 
-# ============================================= VISUAL =======================================================#
+# ============================================= VISUAL ===================================================== #
 def desenhar_grafo(graph, sccs):
     G = nx.DiGraph()
 
@@ -89,7 +89,7 @@ def desenhar_grafo(graph, sccs):
     plt.title("Componentes Fortemente Conectados (Tarjan)")  # Título do gráfico
     plt.show() 
 
-# ========================================== Main =========================================================#
+# ============================================= MAIN ======================================================= #
 def add_edge(graph, u, v):
     graph[u].append(v) 
 
