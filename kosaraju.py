@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import networkx as nx
+import matplotlib.cm as cm
 from collections import defaultdict
 
 # Inicialização do grafo
@@ -55,16 +56,15 @@ def kosaraju(grafo):
 
 
 # Função para sugerir amigos baseando-se em amigos em comum
-def sugerir_amigos(grafo, usuario):
-    amigos = set(grafo[usuario])
-    sugestoes = set()
-
-    for amigo in amigos:
-        for potencial in grafo[amigo]:
-            if potencial != usuario and potencial not in amigos:
-                sugestoes.add(potencial)
-
-    return list(sugestoes)
+def sugerir_amigos(grafo, usuario, clusters):
+     # Encontrar o cluster ao qual o usuário pertence
+    for cluster in clusters:
+        if usuario in cluster:
+            # Sugerir amigos dentro do cluster que ainda não têm conexão direta com o usuário
+            amigos = set(grafo[usuario])
+            sugestoes = [v for v in cluster if v != usuario and v not in amigos]
+            return sugestoes
+    return []
 
 
 # Criação do grafo usando dicionário
@@ -117,22 +117,50 @@ for node in G.nodes():
     node_colors.append(node_cluster_map.get(node, "#000000"))
 
 # Desenhando o grafo
-plt.figure(figsize=(10, 7))
+plt.figure(figsize=(6, 5))
 pos = nx.spring_layout(G)  # Layout para distribuir os nós
 nx.draw(G, pos, with_labels=True, node_color=node_colors, edge_color="#A9A9A9", node_size=800, font_size=10, font_color="white", arrows=True)
-
-
-cores = ['red', 'orange', 'gray', 'yellow', 'green', 'purple']
-# Sugerindo amigos para o usuário 0 (A)
-for i in range(len(grafo)-1):
-    sugestoes = sugerir_amigos(grafo, i)
-    print(f"\nSugestões de amigos para o usuário {i}: {sugestoes}")
-    # Adicionando arestas tracejadas para as sugestões
-    for usuario in sugestoes:
-        plt.plot(*zip(pos[i], pos[usuario]), color=cores[i], linestyle='--', linewidth=2)  # Aresta tracejada para as sugestões
-
-
-
-
 plt.title("Componentes Fortemente Conectados no Grafo")
 plt.show()
+
+
+
+# Criando um grafo apenas com as sugestões de amizade
+G_sugestoes = nx.DiGraph()
+
+# Paleta de cores para sugestões de amizade
+n_nodes = len(grafo)
+colors = cm.get_cmap('tab10', n_nodes)  # Utiliza um mapa de cores com uma paleta discreta
+
+print(f"cores: {colors}")
+# Adicionando as sugestões de amizade ao grafo e definindo suas cores
+edge_colors = []
+for i in range(len(grafo)):
+    sugestoes = sugerir_amigos(grafo, i, clusters)
+    for usuario in sugestoes:
+        G_sugestoes.add_edge(i, usuario)
+        edge_colors.append(colors(i))
+        
+# Visualizando o grafo apenas com as sugestões de amizade
+plt.figure(figsize=(6, 5))
+nx.draw(G_sugestoes, pos, with_labels=True, node_color=node_colors, edge_color= edge_colors, node_size=800, font_size=10, font_color="white", arrows=True)
+plt.title("Grafo com Sugestões de Amizade")
+plt.show()
+
+# Função para visualizar as sugestões de amizade para um nó específico
+def visualizar_sugestoes_para_no(no):
+    # Criando um grafo apenas com as sugestões de amizade do nó específico
+    G_sugestoes_no = nx.DiGraph()
+
+    sugestoes = sugerir_amigos(grafo, no, clusters)
+    for usuario in sugestoes:
+        G_sugestoes_no.add_edge(no, usuario)
+
+    # Visualizando o grafo com as sugestões de amizade para o nó específico
+    plt.figure(figsize=(10, 7))
+    nx.draw(G_sugestoes_no, pos, with_labels=True, node_color="red", edge_color="red", 
+            node_size=800, font_size=10, font_color="white", arrows=True)
+    plt.title(f"Grafo com Sugestões de Amizade para o Nó {no}")
+    plt.show()
+
+visualizar_sugestoes_para_no(0)
