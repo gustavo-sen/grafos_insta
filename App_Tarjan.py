@@ -94,14 +94,26 @@ def add_edge(graph, u, v):
     graph[u].append(v) 
 
 def main():
-    num_vertices = 5                        # Número de vértices
+    num_vertices = 11                        # Número de vértices
     graph = defaultdict(list) 
 
-    add_edge(graph, 0, 2)
-    add_edge(graph, 2, 1)
-    add_edge(graph, 1, 0)
-    add_edge(graph, 0, 3)
-    add_edge(graph, 3, 4)
+    add_edge(graph,0, 1)
+    add_edge(graph,0, 3)
+    add_edge(graph,1, 2)
+    add_edge(graph,1, 4)
+    add_edge(graph,2, 0)
+    add_edge(graph,2, 6)
+    add_edge(graph,3, 2)
+    add_edge(graph,4, 5)
+    add_edge(graph,4, 6)
+    add_edge(graph,5, 6)
+    add_edge(graph,5, 7)
+    add_edge(graph,5, 8)
+    add_edge(graph,5, 9)
+    add_edge(graph,6, 4)
+    add_edge(graph,7, 9)
+    add_edge(graph,8, 9)
+    add_edge(graph,9, 8)
 
     cluster_list = tarjan(graph, num_vertices)
     print("Componentes Fortemente Conectados:", cluster_list)
