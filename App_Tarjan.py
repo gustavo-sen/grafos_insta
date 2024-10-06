@@ -2,6 +2,20 @@ import matplotlib.pyplot as plt
 import networkx as nx
 from collections import defaultdict
 
+
+"""
+Realiza uma busca em profundidade para encontrar componentes fortemente conectados.
+
+Parâmetros:
+- current_node: O vértice atual sendo processado.
+- graph: O grafo representado como um dicionário de listas de adjacência.
+- indices: Lista que armazena o índice de descoberta de cada vértice.
+- lowlink: Lista que armazena o menor índice acessível a partir de cada vértice.
+- stack: Pilha que mantém os vértices em processamento.
+- cluster_list: Lista que armazena os componentes fortemente conectados encontrados.
+- index: O índice atual para o vértice que está sendo processado.
+
+"""
 # Função de DFS que implementa o algoritmo de Tarjan
 def strongconnect(current_node, graph, indices, lowlink, stack, cluster_list, index):
     indices[current_node] = index                                 # Atribui o índice atual ao vértice v
