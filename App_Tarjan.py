@@ -3,28 +3,28 @@ import networkx as nx
 from collections import defaultdict
 
 # Função de DFS que implementa o algoritmo de Tarjan
-def strongconnect(v, graph, indices, lowlink, stack, cluster_list, index):
-    indices[v] = index                                      # Atribui o índice atual ao vértice v
-    lowlink[v] = index                                      # Inicializa lowlink(menor indice) com o índice atual
-    index += 1                                              # Incrementa o índice para o próximo vértice
-    stack.append(v)                                         # Adiciona vertice atual à pilha
+def strongconnect(current_node, graph, indices, lowlink, stack, cluster_list, index):
+    indices[current_node] = index                                 # Atribui o índice atual ao vértice v
+    lowlink[current_node] = index                                 # Inicializa lowlink(menor indice) com o índice atual
+    index += 1                                                    # Incrementa o índice para o próximo vértice
+    stack.append(current_node)                                    # Adiciona vertice atual à pilha
 
-    for neighbor in graph[v]:                                                               # Percorre os vizinhos do vértice atual
-        if indices[neighbor] == -1:                                                         # Se o vizinho não foi visitado
+    for neighbor in graph[current_node]:                                                            # Percorre os vizinhos do vértice atual
+        if indices[neighbor] == -1:                                                                 # Se o vizinho não foi visitado
             index = strongconnect(neighbor, graph, indices, lowlink, stack, cluster_list, index)    
-            lowlink[v] = min(lowlink[v], lowlink[neighbor])                                 # Atualiza lowlink de vertice atual
-        elif neighbor in stack:                                                             # Verifica se o vizinho está na Stack de processamento
-            lowlink[v] = min(lowlink[v], indices[neighbor])                                 # Atualiza lowlink de vértice atual
+            lowlink[current_node] = min(lowlink[current_node], lowlink[neighbor])                   # Atualiza lowlink de vertice atual
+        elif neighbor in stack:                                                                     # Verifica se o vizinho está na Stack de processamento
+            lowlink[current_node] = min(lowlink[current_node], indices[neighbor])                   # Atualiza lowlink de vértice atual
 
     
-    if lowlink[v] == indices[v]:                            # Se vértice atual é uma raiz de um cluster, ou seja, o menor indice
+    if lowlink[current_node] == indices[current_node]:                 # Se vértice atual é uma raiz de um cluster, ou seja, o menor indice
         cluster = []                                        
         while True:
-            w = stack.pop()                                 # Remove o último vértice da pilha
-            cluster.append(w)                               # Adiciona w(vértice que está sendo retirado da pilha) ao SCC
-            if w == v:                                      # Se w é igual a v, saiu do SCC
+            removed_node = stack.pop()                                 # Remove o último vértice da pilha
+            cluster.append(removed_node)                               # Adiciona w(vértice que está sendo retirado da pilha) ao SCC
+            if removed_node == current_node:                           # Se no anterior é igual a no atual, saiu terminou o cluster
                 break
-        cluster_list.append(cluster)                        # Adiciona o Cluster à lista de Clusters
+        cluster_list.append(cluster)                                   # Adiciona o Cluster à lista de Clusters
 
     return index 
 
@@ -34,15 +34,15 @@ def tarjan(graph, num_vertices):
     lowlink = [-1] * num_vertices    
 
     stack = []                       
-    cluster_list_sccs = []                        
+    cluster_list = []                        
     index = 0                        
 
     # Realiza um teste para ver se o vertice ja foi visitado, caso nao, visita.
     for v in range(num_vertices):
         if indices[v] == -1:                                                                    
-            index = strongconnect(v, graph, indices, lowlink, stack, cluster_list_sccs, index)
+            index = strongconnect(v, graph, indices, lowlink, stack, cluster_list, index)
 
-    return cluster_list_sccs
+    return cluster_list
 
 # Função para sugerir amigos dentro dos componentes
 def sugerir_amigos(cluster_list):
