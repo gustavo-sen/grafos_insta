@@ -102,16 +102,32 @@ def desenhar_grafo(graph, sccs):
     plt.title("Componentes Fortemente Conectados (Tarjan)")
     plt.show()
 
-
 # ============================================= MAIN ======================================================= #
 def add_edge(graph, u, v):
     graph[u].append(v) 
 
-def main():
-    num_vertices = 11                        # Número de vértices
+def main():  
     graph = defaultdict(list) 
 
-    add_edge(graph,0, 1)
+    # === EXEMPLO 1  === #
+    num_vertices = 7
+    add_edge(graph, 0, 1)
+    add_edge(graph, 1, 2)
+    add_edge(graph, 2, 0)
+    add_edge(graph, 3, 7)
+    add_edge(graph, 3, 4)
+    add_edge(graph, 4, 5)
+    add_edge(graph, 5, 0)
+    add_edge(graph, 5, 6)
+    add_edge(graph, 6, 4)
+    add_edge(graph, 6, 0)
+    add_edge(graph, 6, 2)
+    add_edge(graph, 7, 3)
+    add_edge(graph, 7, 5)
+
+    # === EXEMPLO 2  === #
+    # num_vertices = 7
+    # add_edge(graph,0, 1)
     # add_edge(graph,0, 3)
     # add_edge(graph,1, 2)
     # add_edge(graph,1, 4)
@@ -128,20 +144,6 @@ def main():
     # add_edge(graph,7, 9)
     # add_edge(graph,8, 9)
     # add_edge(graph,9, 8)
-
-    add_edge(graph, 0, 1)
-    add_edge(graph, 1, 2)
-    add_edge(graph, 2, 0)
-    add_edge(graph, 3, 7)
-    add_edge(graph, 3, 4)
-    add_edge(graph, 4, 5)
-    add_edge(graph, 5, 0)
-    add_edge(graph, 5, 6)
-    add_edge(graph, 6, 4)
-    add_edge(graph, 6, 0)
-    add_edge(graph, 6, 2)
-    add_edge(graph, 7, 3)
-    add_edge(graph, 7, 5)
 
     cluster_list = tarjan(graph, num_vertices)
     print("Componentes Fortemente Conectados:", cluster_list)
