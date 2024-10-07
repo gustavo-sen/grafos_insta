@@ -110,7 +110,7 @@ def main():
     graph = defaultdict(list) 
 
     # === EXEMPLO 1  === #
-    num_vertices = 7
+    num_vertices = 8
     add_edge(graph, 0, 1)
     add_edge(graph, 1, 2)
     add_edge(graph, 2, 0)
@@ -126,7 +126,7 @@ def main():
     add_edge(graph, 7, 5)
 
     # === EXEMPLO 2  === #
-    # num_vertices = 7
+    # num_vertices = 10
     # add_edge(graph,0, 1)
     # add_edge(graph,0, 3)
     # add_edge(graph,1, 2)
