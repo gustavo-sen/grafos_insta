@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 import networkx as nx
 from collections import defaultdict
+import numpy as np
 
 
 """
@@ -82,13 +83,25 @@ def desenhar_grafo(graph, sccs):
 
     cores = ['purple', 'black', 'green', 'brown', 'red', 'blue', 'pink', 'gray']
     cor_map = {node: cores[idx % len(cores)] for idx, scc in enumerate(sccs) for node in scc} 
+    
+    pos = {}
+    cluster_center_distance = 4
+    for i, scc in enumerate(sccs):
+        angle = 2 * np.pi * i / len(sccs)
+        cluster_center = np.array([np.cos(angle), np.sin(angle)]) * cluster_center_distance
 
-    pos = nx.spring_layout(G)
+        subgraph = G.subgraph(scc)
+        subgraph_pos = nx.spring_layout(subgraph)
+
+        for node in subgraph_pos:
+            pos[node] = subgraph_pos[node] + cluster_center
+
     nx.draw(G, pos, with_labels=True, node_color=[cor_map.get(no, 'black') for no in G.nodes],
             node_size=800, font_size=10, font_color='white', arrows=True, edge_color='black')
+    
+    plt.title("Componentes Fortemente Conectados (Tarjan)")
+    plt.show()
 
-    plt.title("Componentes Fortemente Conectados (Tarjan)")  # Título do gráfico
-    plt.show() 
 
 # ============================================= MAIN ======================================================= #
 def add_edge(graph, u, v):
@@ -99,22 +112,36 @@ def main():
     graph = defaultdict(list) 
 
     add_edge(graph,0, 1)
-    add_edge(graph,0, 3)
-    add_edge(graph,1, 2)
-    add_edge(graph,1, 4)
-    add_edge(graph,2, 0)
-    add_edge(graph,2, 6)
-    add_edge(graph,3, 2)
-    add_edge(graph,4, 5)
-    add_edge(graph,4, 6)
-    add_edge(graph,5, 6)
-    add_edge(graph,5, 7)
-    add_edge(graph,5, 8)
-    add_edge(graph,5, 9)
-    add_edge(graph,6, 4)
-    add_edge(graph,7, 9)
-    add_edge(graph,8, 9)
-    add_edge(graph,9, 8)
+    # add_edge(graph,0, 3)
+    # add_edge(graph,1, 2)
+    # add_edge(graph,1, 4)
+    # add_edge(graph,2, 0)
+    # add_edge(graph,2, 6)
+    # add_edge(graph,3, 2)
+    # add_edge(graph,4, 5)
+    # add_edge(graph,4, 6)
+    # add_edge(graph,5, 6)
+    # add_edge(graph,5, 7)
+    # add_edge(graph,5, 8)
+    # add_edge(graph,5, 9)
+    # add_edge(graph,6, 4)
+    # add_edge(graph,7, 9)
+    # add_edge(graph,8, 9)
+    # add_edge(graph,9, 8)
+
+    add_edge(graph, 0, 1)
+    add_edge(graph, 1, 2)
+    add_edge(graph, 2, 0)
+    add_edge(graph, 3, 7)
+    add_edge(graph, 3, 4)
+    add_edge(graph, 4, 5)
+    add_edge(graph, 5, 0)
+    add_edge(graph, 5, 6)
+    add_edge(graph, 6, 4)
+    add_edge(graph, 6, 0)
+    add_edge(graph, 6, 2)
+    add_edge(graph, 7, 3)
+    add_edge(graph, 7, 5)
 
     cluster_list = tarjan(graph, num_vertices)
     print("Componentes Fortemente Conectados:", cluster_list)
