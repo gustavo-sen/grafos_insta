@@ -80,7 +80,7 @@ def desenhar_grafo(graph, sccs):
         for v in graph[u]:
             G.add_edge(u, v)  
 
-    cores = ['red', 'blue', 'green', 'orange', 'purple', 'brown', 'pink', 'gray']
+    cores = ['purple', 'black', 'green', 'brown', 'red', 'blue', 'pink', 'gray']
     cor_map = {node: cores[idx % len(cores)] for idx, scc in enumerate(sccs) for node in scc} 
 
     pos = nx.spring_layout(G)
