@@ -18,14 +18,14 @@ def find_cluster(current_node, graph, indices, lowlink, stack, cluster_list, ind
             lowlink[current_node] = min(lowlink[current_node], indices[neighbor])                   # Atualiza lowlink de vértice atual
 
     
-    if lowlink[current_node] == indices[current_node]:      # Se vértice atual é uma raiz de um cluster, ou seja, o menor indice do loop
+    if lowlink[current_node] == indices[current_node]:      # Se vértice atual é uma raiz de um cluster (low_link == indice)
         cluster = []                                        # Inicia um Cluster
         while True:
             removed_node = stack.pop()                      # Remove o último vértice da pilha
             cluster.append(removed_node)                    # Adiciona w(vértice que está sendo retirado da pilha) ao Cluster
-            if removed_node == current_node:                # Se no anterior é igual a no atual, saiu terminou o cluster
-                break
-            
+            if removed_node == current_node:                # se re-encontrou o nó raíz, siginifica que terminou o cluster
+                break   
+
         cluster_list.append(cluster)                        # Adiciona o Cluster à lista de Clusters
 
     return index 
